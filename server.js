@@ -1,8 +1,7 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
-const { Sequelize } = require("sequelize");
-const mssql = require("mssql");
+const mssql = require("mssql/msnodesqlv8");
 
 //DotEnv- //
 dotenv.config();
@@ -21,28 +20,29 @@ app.use((req, res, next) => {
     next();
 });
 
-const dbConnection = mssql.connect({
-    database: process.env.MSSQL_DB,
-    password: process.env.PASSWORD,
-    username: process.env.USERNAME,
-    server: process.env.HOST,
-    dialect: process.env.DIALECT_MSSQ,  
-    port: process.env.MSSQL_DB_PORT,
-    pool: {
-        max: 10,
-        min: 0,
-        idleTimeoutMillis: 30000
-    },
-    trustServerCertificate: true
+const dbConnection = new mssql.ConnectionPool({
+    database: process.env.MSSQL_DB,  
+    server: process.env.SERVER,
+    user: process.env.USER,           
+    password: process.env.PASSWORD,                                            
+    port: process.env.MSSQL_DB_PORT,  
+    options: {  
+    trustedconnection: true,     
+    enableArithAbort: true,
+    trustServerCertificate: true,      
+},         
+  
 });
 
-dbConnection.connect.then(()=>{
-    console.log("My SQL Database Connected Successfully")
-}).catch((error)=>{
-  console.log(error);
-})
-
-
+ dbConnection.connect(function(error){
+     if(error) throw error,  console.error("Unable to connect to dataBase Sorry.", error);{
+        console.log("My SQL Database Connected Successfully"); 
+     }
+ });
+       
+ 
+   
+  
 //Api-Routes.//
 //working on api route.
 // const test1Questions = require("");

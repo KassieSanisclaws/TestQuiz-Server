@@ -1,28 +1,25 @@
-const { Sequelize } = require("sequelize");
-const mssql = require("mssql");
-const dotenv = require("dotenv");
+const dbConfig = require("./dbConfig");
+const msSQL = require("mssql");
 
 //DotEnv config holding the keys of the sequelize connection.//
 dotenv.config();
 
-const dbConnection = mssql.connect({
-    database: process.env.MSSQL_DB,
-    password: process.env.PASSWORD,
-    username: process.env.USERNAME,
-    server: process.env.HOST,
-    dialect: process.env.DIALECT_MSSQ,  
-    port: process.env.MSSQL_DB_PORT,
-    pool: {
-        max: 10,
-        min: 0,
-        idleTimeoutMillis: 30000
-    },
-    trustServerCertificate: true
-});
+const dbConnection = {
+           server: process.env.SERVER,
+           dialect: process.env.DIALECT_MSSQ,
+           user: process.env.USERNAME,
+           password: process.env.PASSWORD,
+           database: process.env.MSSQL_DB,
+           port: process.env.MSSQL_DB_PORT,
+       pool: { max: 10, min: 0, idleTimeoutMillis: 30000 },            
+       options: { trustedConnection: true, trustServerCertificate: false }
+    };
 
-dbConnection.connect(function(error){
-    if(error) throw error;
-    console.log("My SQL Database Connected Successfully")
+    
+msSQL.connect(dbConfig).then(()=>{
+    console.log("Success!");
+}).catch((error)=>{
+    console.log(error);
 })
 
 //Connection keys defined.//

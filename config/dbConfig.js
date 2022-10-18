@@ -2,7 +2,7 @@
   
  dotenv.config();
  
- module.exports = {
+ const dbConfig = {
     "development": {
       "username" : process.env.USERNAME,
       "password" : process.env.PASSWORD,
@@ -26,3 +26,5 @@
       "dialect":  process.env.DIALECT_MSSQ
     }
   }
+
+  module.exports = dbConfig;
